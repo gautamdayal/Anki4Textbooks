@@ -83,4 +83,4 @@ def select_numbers(img):
     #     plt.show()
 
 # print(pytesseract.image_to_data(load('numexample1.png')))
-print(select_numbers(load('numexample1.png')))
+print(select_numbers(load('images/numexample1.png')))
