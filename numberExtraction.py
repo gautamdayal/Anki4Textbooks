@@ -147,8 +147,6 @@ def select_numbers(img):
     print(f"Numbers obtained in {time.time() - s}s")
     print(numbers)
 
-    [5, x, y]
-
     # rawNums = [x[0] for x in numbers]
     # plt.scatter(rawNums, np.zeros(len(rawNums)))
     # plt.show()
