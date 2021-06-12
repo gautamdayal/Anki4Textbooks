@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 from numpy.linalg import norm
 import re
+import math
 import pytesseract
 import matplotlib.pyplot as plt
 import itertools
@@ -21,11 +22,11 @@ How to detect question numbers:
 """
 
 def load(somethinglol):
-    img = cv2.imread(somethinglol)
-    h, w, c = img.shape
+    img = cv2.imread(somethinglol, 0)
+    h, w = img.shape
     print(h, w)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = cv2.resize(img, (1000, 1000))
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = cv2.resize(img, (w*5, h*5))
     return img
 
 def select_numbers(img):
@@ -92,10 +93,12 @@ def select_numbers(img):
         consecCounter/=n
 
         tot += abs(1 - consecCounter)
-        tot += (1/n)*4
+
+        tot -= 2*n
         # print(tot)
 
         # check if it's within line of best fit
+        # uses average shortest distances of the points from the line of best fit
 
         X = [numbers[i][1] for i in numset]
         Y = [numbers[i][2] for i in numset]
@@ -110,14 +113,13 @@ def select_numbers(img):
             dist = np.abs(np.cross(p2-p1, p1-p3)) / norm(p2-p1)
             totdists += dist
 
-        tot += totdists/n
-        # plt.scatter(X, Y)
-        # plt.plot(Xfit, Y)
-        # plt.show()
+        tot += (totdists/n)
 
-        print(f"Numset: {numset}; Actual numbers: {[numbers[i][0] for i in numset]}; Score: {tot}")
+        # print(f"Numset: {numset}; Actual numbers: {[numbers[i][0] for i in numset]}; Score: {tot}")
 
         # see where that line is pointing
+        tot += abs(math.atan(coeffs[0]))*1000
+
         return tot
 
     def treeify(numbers):
@@ -147,8 +149,6 @@ def select_numbers(img):
     print(f"Numbers obtained in {time.time() - s}s")
     print(numbers)
 
-    [5, x, y]
-
     # rawNums = [x[0] for x in numbers]
     # plt.scatter(rawNums, np.zeros(len(rawNums)))
     # plt.show()
@@ -170,10 +170,14 @@ def select_numbers(img):
     scores = list(map(score, numsets))
     ranking = np.argsort(scores)
     n = len(ranking)
+    # print(score([0, 1, 3, 5, 6]))
+    print("----------------------")
     for i in range(5):
-        print(numsets[ranking[i]], score(numsets[ranking[i]]), numbersFromNumset(numsets[ranking[i]]))
+        print(f"Numset: {numsets[ranking[i]]}; Actual numbers: {numbersFromNumset(numsets[ranking[i]])}; Score: {score(numsets[ranking[i]])}")
 
     best = numsets[ranking[0]]
+
+    return [numbers[i] for i in best]
 
     # plt.show()
     # print(numsets)
@@ -184,4 +188,4 @@ def select_numbers(img):
     #     plt.show()
 
 # print(pytesseract.image_to_data(load('numexample1.png')))
-print(select_numbers(load('images/mathtest2.png')))
+# print(select_numbers(load('images/test.png')))
