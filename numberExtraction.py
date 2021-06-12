@@ -26,7 +26,7 @@ def load(somethinglol):
     h, w = img.shape
     print(h, w)
     # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img = cv2.resize(img, (w*8, h*8), interpolation=cv2.INTER_AREA)
+    img = cv2.resize(img, (1000, 1000), interpolation=cv2.INTER_AREA)
     return img
 
 def select_numbers(img):
@@ -160,8 +160,8 @@ def select_numbers(img):
 
     # Creating the number graph
     G = nx.from_dict_of_lists(treeify(numbers))
-    nx.draw(G, labels=labeldict, pos=pos, with_labels=True, arrows=True)
-    plt.show()
+    # nx.draw(G, labels=labeldict, pos=pos, with_labels=True, arrows=True)
+    # plt.show()
 
     # print(score([0, 1, 3, 5, 6]))
 
@@ -177,6 +177,7 @@ def select_numbers(img):
 
     best = numsets[ranking[0]]
 
+    numbers = [numbers[i][:2] + [-numbers[i][2], ] for i in range(len(numbers))]
     return [numbers[i] for i in best]
 
     # plt.show()
