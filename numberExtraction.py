@@ -205,6 +205,6 @@ def clusterCoords(img):
 
     return coords
 
-print(clusterCoords(load('images/mathtest2.png')))
+
 # print(pytesseract.image_to_data(load('numexample1.png')))
 # print(select_numbers(load('images/test.png')))
