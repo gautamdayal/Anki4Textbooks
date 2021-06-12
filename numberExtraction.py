@@ -147,8 +147,6 @@ def select_numbers(img):
     print(f"Numbers obtained in {time.time() - s}s")
     print(numbers)
 
-    [5, x, y]
-
     # rawNums = [x[0] for x in numbers]
     # plt.scatter(rawNums, np.zeros(len(rawNums)))
     # plt.show()
@@ -182,6 +180,22 @@ def select_numbers(img):
     #     H = nx.from_edgelist([(path[i], path[i+1]) for i in range(len(path) - 1)])
     #     nx.draw(H, labels = labeldict, with_labels=True, pos=pos)
     #     plt.show()
+
+def clusterCoords(best, numbers, img):
+    # does not take care of multi-column question numbers
+    coords = []
+    w, h = img.shape
+    for i in range(len(best)):
+        question1, x1, y1 = numbers[i]
+        
+        if i != len(best)-1:
+            question2, x2, y2 = numbers[i+1]
+        else:
+            y2 = h
+        
+        coords.append([(x1 + w)//2, (y1+y2)//2])
+
+    return coords
 
 # print(pytesseract.image_to_data(load('numexample1.png')))
 print(select_numbers(load('images/mathtest2.png')))
