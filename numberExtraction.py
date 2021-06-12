@@ -26,7 +26,7 @@ def load(somethinglol):
     h, w = img.shape
     print(h, w)
     # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img = cv2.resize(img, (w*5, h*5))
+    img = cv2.resize(img, (w*8, h*8), interpolation=cv2.INTER_AREA)
     return img
 
 def select_numbers(img):
@@ -187,21 +187,23 @@ def select_numbers(img):
     #     nx.draw(H, labels = labeldict, with_labels=True, pos=pos)
     #     plt.show()
 
-def clusterCoords(best, numbers, img):
+def clusterCoords(img):
     # does not take care of multi-column question numbers
+    qcoords = select_numbers(img)
     coords = []
-    w, h = img.shape
-    for i in range(len(best)):
-        question1, x1, y1 = numbers[i]
-        
-        if i != len(best)-1:
-            question2, x2, y2 = numbers[i+1]
+    h, w = img.shape
+    for i in range(len(qcoords)):
+        question1, x1, y1 = qcoords[i]
+
+        if i != len(qcoords)-1:
+            question2, x2, y2 = qcoords[i+1]
         else:
             y2 = h
-        
+
         coords.append([(x1 + w)//2, (y1+y2)//2])
 
     return coords
 
+print(clusterCoords(load('images/mathtest2.png')))
 # print(pytesseract.image_to_data(load('numexample1.png')))
 # print(select_numbers(load('images/test.png')))
