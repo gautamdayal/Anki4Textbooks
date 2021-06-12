@@ -75,7 +75,7 @@ def select_numbers(img):
         n = len(G.nodes)
         for source in range(n):
             for target in range(source+1, n):
-                paths.extend([path for path in nx.all_simple_paths(G, source=0, target=16)])
+                paths.extend([path for path in nx.all_simple_paths(G, source=source, target=target)])
         return paths
 
         # return paths
@@ -92,6 +92,7 @@ def select_numbers(img):
         consecCounter/=n
 
         tot += abs(1 - consecCounter)
+        tot += (1/n)*4
         # print(tot)
 
         # check if it's within line of best fit
@@ -146,6 +147,8 @@ def select_numbers(img):
     print(f"Numbers obtained in {time.time() - s}s")
     print(numbers)
 
+    [5, x, y]
+
     # rawNums = [x[0] for x in numbers]
     # plt.scatter(rawNums, np.zeros(len(rawNums)))
     # plt.show()
@@ -166,10 +169,12 @@ def select_numbers(img):
     numsets = generateNumsets(G)
     scores = list(map(score, numsets))
     ranking = np.argsort(scores)
-    print(numsets[ranking[0]])
-    # n = len(ranking)
-    # for i in range(n):
-    #     print(numsets[ranking[i]], score(numsets[ranking[i]]), numbersFromNumset(numsets[ranking[i]]))
+    n = len(ranking)
+    for i in range(5):
+        print(numsets[ranking[i]], score(numsets[ranking[i]]), numbersFromNumset(numsets[ranking[i]]))
+
+    best = numsets[ranking[0]]
+
     # plt.show()
     # print(numsets)
     # for path in numsets:
