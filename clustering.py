@@ -43,7 +43,7 @@ centroids = np.array(clusterCoords(image))
 # Kmeans 2
 centroid, label = kmeans2(avg_coords, centroids, minit='matrix')
 # plt.subplot(121)
-plt.title('Centroids after manual')
+plt.title('Centroids after initializing based on questions')
 plt.scatter(avg_coords[:,0], avg_coords[:,1])
 plt.plot(centroid[:, 0], centroid[:, 1], 'k*')
 plt.show()
