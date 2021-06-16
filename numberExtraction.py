@@ -21,6 +21,13 @@ How to detect question numbers:
 4. That line of best fit shoult point straight downwards.
 """
 
+def load(filename):
+    img = cv2.imread(filename, 0)
+    # cv2.imshow("screen", img)
+    # cv2.waitKey(0)
+    img = cv2.resize(img, (1000, 1000))
+    return img
+
 def select_numbers(img):
     """
     Develop a score for each set of numbers. The score is based on:
