@@ -11,14 +11,7 @@ import pytesseract
 import matplotlib.pyplot as plt
 import itertools
 import sklearn.metrics
-# print(f"Imports completed in {time.time() - s}s")
-
-def load(somethinglol):
-    img = cv2.imread(somethinglol)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    h, w = img.shape
-    img = cv2.resize(img, (1000, 1000))
-    return img
+print(f"Imports completed in {time.time() - s}s")
 
 """
 How to detect question numbers:
@@ -27,6 +20,14 @@ How to detect question numbers:
 3. If you draw a line of best fit through them, they're all very close to that line.
 4. That line of best fit shoult point straight downwards.
 """
+
+def load(somethinglol):
+    img = cv2.imread(somethinglol, 0)
+    h, w = img.shape
+    print(h, w)
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = cv2.resize(img, (1000, 1000), interpolation=cv2.INTER_AREA)
+    return img
 
 def select_numbers(img):
     """
@@ -145,8 +146,8 @@ def select_numbers(img):
     numbers = list(filter(lambda x: x[0].isnumeric(), boxes))
     numbers = list(map(lambda b: [int(b[0]), ] + b[1:], numbers))
     numbers.sort(key= lambda x: x[0])
-    # print(f"Numbers obtained in {time.time() - s}s")
-    # print(numbers)
+    print(f"Numbers obtained in {time.time() - s}s")
+    print(numbers)
 
     # rawNums = [x[0] for x in numbers]
     # plt.scatter(rawNums, np.zeros(len(rawNums)))
@@ -170,9 +171,9 @@ def select_numbers(img):
     ranking = np.argsort(scores)
     n = len(ranking)
     # print(score([0, 1, 3, 5, 6]))
-    # print("----------------------")
-    # for i in range(5):
-    #     print(f"Numset: {numsets[ranking[i]]}; Actual numbers: {numbersFromNumset(numsets[ranking[i]])}; Score: {score(numsets[ranking[i]])}")
+    print("----------------------")
+    for i in range(5):
+        print(f"Numset: {numsets[ranking[i]]}; Actual numbers: {numbersFromNumset(numsets[ranking[i]])}; Score: {score(numsets[ranking[i]])}")
 
     best = numsets[ranking[0]]
 
@@ -204,26 +205,6 @@ def clusterCoords(img):
 
     return coords
 
-def cropCoords(questionCoords, imgWidth, imgHeight):
-    quads = []
-    n = len(questionCoords)
-    for i in range(n):
-        q1 = questionCoords[i]
-        if i == n - 1:
-            q2 = [None, imgWidth, imgHeight]
-        else:
-            q2 = questionCoords[i+1]
-        quads.append([q1[2], q2[2], 0, imgWidth])
-    return quads
-
-
+# print(clusterCoords(load('images/mathtest2.png')))
 # print(pytesseract.image_to_data(load('numexample1.png')))
-img = load('images/test.png')
-questionCoords = select_numbers(img)
-h, w = img.shape
-imgNum = 0
-for quad in cropCoords(questionCoords, w, h):
-    temp = img[quad[0]:quad[1], quad[2]:quad[3]]
-    cv2.imshow(str(imgNum), temp)
-    imgNum += 1
-cv2.waitKey(0)
+# print(select_numbers(load('images/test.png')))
