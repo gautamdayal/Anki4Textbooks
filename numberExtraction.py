@@ -197,7 +197,6 @@ def clusterCoords(img):
 
     return coords
 
-<<<<<<< HEAD
 def cropCoords(questionCoords, imgWidth, imgHeight):
     quads = []
     n = len(questionCoords)
@@ -211,9 +210,6 @@ def cropCoords(questionCoords, imgWidth, imgHeight):
     return quads
 
 
-=======
-# print(clusterCoords(load('images/econtest1.png')))
->>>>>>> 4c00577 (loacl)
 # print(pytesseract.image_to_data(load('numexample1.png')))
 img = load('images/test.png')
 questionCoords = select_numbers(img)
