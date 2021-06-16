@@ -205,6 +205,26 @@ def clusterCoords(img):
 
     return coords
 
+def cropCoords(questionCoords, imgWidth, imgHeight):
+    quads = []
+    n = len(questionCoords)
+    for i in range(n):
+        q1 = questionCoords[i]
+        if i == n - 1:
+            q2 = [None, imgWidth, imgHeight]
+        else:
+            q2 = questionCoords[i+1]
+        quads.append([q1[2], q2[2], 0, imgWidth])
+    return quads
+
 
 # print(pytesseract.image_to_data(load('numexample1.png')))
-# print(select_numbers(load('images/test.png')))
+img = load('images/test.png')
+questionCoords = select_numbers(img)
+h, w = img.shape
+imgNum = 0
+for quad in cropCoords(questionCoords, w, h):
+    temp = img[quad[0]:quad[1], quad[2]:quad[3]]
+    cv2.imshow(str(imgNum), temp)
+    imgNum += 1
+cv2.waitKey(0)
