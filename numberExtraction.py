@@ -13,6 +13,13 @@ import itertools
 import sklearn.metrics
 # print(f"Imports completed in {time.time() - s}s")
 
+def load(somethinglol):
+    img = cv2.imread(somethinglol)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    h, w = img.shape
+    img = cv2.resize(img, (1000, 1000))
+    return img
+
 """
 How to detect question numbers:
 1. Although some numbers are missed out, they're in sequence most of the time.
