@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import itertools
 import sklearn.metrics
 # print(f"Imports completed in {time.time() - s}s")
+pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe' #windoge moment
 
 def load(somethinglol):
     img = cv2.imread(somethinglol)
@@ -28,7 +29,7 @@ How to detect question numbers:
 4. That line of best fit shoult point straight downwards.
 """
 
-def select_numbers(img):
+def select_numbers(img, indexing_method):
     """
     Develop a score for each set of numbers. The score is based on:
     - Exactly how consecutive they are (maybe)
@@ -142,9 +143,12 @@ def select_numbers(img):
     words = pytesseract.image_to_data(img, output_type='data.frame').values.tolist()
     boxes = list(filter(lambda x: isinstance(x[11], str) and x[11].strip(), words))
     boxes = list(map(lambda b: [unpunctuate(b[11]), b[6], -b[7]], boxes))
-    numbers = list(filter(lambda x: x[0].isnumeric(), boxes))
-    numbers = list(map(lambda b: [int(b[0]), ] + b[1:], numbers))
-    numbers.sort(key= lambda x: x[0])
+    if indexing_method == '1':
+        numbers = extractNumbers(boxes)
+    elif indexing_method =='a':
+        numbers = deleteNumbers(boxes)
+        numbers = convertLetters(numbers)
+
     # print(f"Numbers obtained in {time.time() - s}s")
     # print(numbers)
 
@@ -159,10 +163,10 @@ def select_numbers(img):
 
     # Creating the number graph
     G = nx.from_dict_of_lists(treeify(numbers))
-    # nx.draw(G, labels=labeldict, pos=pos, with_labels=True, arrows=True)
-    # plt.show()
+    nx.draw(G, labels=labeldict, pos=pos, with_labels=True, arrows=True)
+    plt.show()
 
-    # print(score([0, 1, 3, 5, 6]))
+
 
     # Sets of numbers
     numsets = generateNumsets(G)
@@ -179,6 +183,15 @@ def select_numbers(img):
     numbers = [numbers[i][:2] + [-numbers[i][2], ] for i in range(len(numbers))]
     return [numbers[i] for i in best]
 
+# numbers = deleteNumbers(boxes)
+# numbers = convertLetters(numbers)
+
+def extractNumbers(boxes):
+    numbers = list(filter(lambda x: x[0].isnumeric(), boxes))
+    numbers = list(map(lambda b: [int(b[0]), ] + b[1:], numbers))
+    numbers.sort(key= lambda x: x[0])
+    return numbers
+
     # plt.show()
     # print(numsets)
     # for path in numsets:
@@ -186,6 +199,16 @@ def select_numbers(img):
     #     H = nx.from_edgelist([(path[i], path[i+1]) for i in range(len(path) - 1)])
     #     nx.draw(H, labels = labeldict, with_labels=True, pos=pos)
     #     plt.show()
+
+def deleteNumbers(boxes):
+    numbers = list(filter(lambda x: x[0].isalpha(), boxes))
+    return numbers
+
+def convertLetters(numbers):
+    numbers = list(filter(lambda x: len(x[0]) <= 1, numbers))
+    numbers = list(map(lambda b: [ord(b[0])-96, ] + b[1:], numbers))
+    numbers.sort(key= lambda x: x[0])
+    return numbers
 
 def clusterCoords(img):
     # does not take care of multi-column question numbers
@@ -218,12 +241,12 @@ def cropCoords(questionCoords, imgWidth, imgHeight):
 
 
 # print(pytesseract.image_to_data(load('numexample1.png')))
-img = load('images/test.png')
-questionCoords = select_numbers(img)
-h, w = img.shape
-imgNum = 0
-for quad in cropCoords(questionCoords, w, h):
-    temp = img[quad[0]:quad[1], quad[2]:quad[3]]
-    cv2.imshow(str(imgNum), temp)
-    imgNum += 1
-cv2.waitKey(0)
+# img = load('images/test.png')
+# questionCoords = select_numbers(img)
+# h, w = img.shape
+# imgNum = 0
+# for quad in cropCoords(questionCoords, w, h):
+#     temp = img[quad[0]:quad[1], quad[2]:quad[3]]
+#     cv2.imshow(str(imgNum), temp)
+#     imgNum += 1
+# cv2.waitKey(0)
